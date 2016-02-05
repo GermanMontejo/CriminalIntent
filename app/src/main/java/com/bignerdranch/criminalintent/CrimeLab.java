@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.bignerdranch.criminalintent.database.CrimeBaseHelper;
 import com.bignerdranch.criminalintent.database.CrimeCursorWrapper;
@@ -70,7 +71,12 @@ public class CrimeLab {
 
     public void addCrime(Crime crime) {
         ContentValues cv = getContentValues(crime);
-        mSQLiteDatabase.insert(CrimeTable.NAME, crime.getId().toString(), cv);
+        mSQLiteDatabase.insert(CrimeTable.NAME, null, cv);
+    }
+
+    public void deleteCrime(String whereClause, String[] whereArgs) {
+        int rowsDeleted = mSQLiteDatabase.delete(CrimeTable.NAME, whereClause, whereArgs);
+        Toast.makeText(mContext, "Number of rows deleted: " + rowsDeleted, Toast.LENGTH_SHORT).show();
     }
 
     public void updateCrime(Crime crime) {

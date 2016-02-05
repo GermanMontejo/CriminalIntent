@@ -10,7 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+
+import com.bignerdranch.criminalintent.database.CrimeDbSchema;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,17 +21,17 @@ public class CrimePagerActivity extends AppCompatActivity {
     private ViewPager mCrimeViewPager;
     private List<Crime> mCrimeList;
     private Crime mCrime;
+    private UUID crimeId;
     private static final String EXTRA_CRIME_ID = "com.bignerdranch.criminalintent.crime_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crime_pager);
-        UUID crimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
+        crimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
         mCrimeViewPager = (ViewPager) findViewById(R.id.activity_crime_view_pager);
         mCrimeList = CrimeLab.getCrimeLab(this).getCrimeList();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Toast.makeText(getApplicationContext(), "onCreate - crime pager", Toast.LENGTH_LONG).show();
         mCrimeViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
             @Override
             public Fragment getItem(int position) {
@@ -43,6 +44,7 @@ public class CrimePagerActivity extends AppCompatActivity {
                 return mCrimeList.size();
             }
         });
+
         getParentActivityIntent();
         for (int i = 0; i < mCrimeList.size(); i++) {
             if (mCrimeList.get(i).getId().equals(crimeId)) {
@@ -68,7 +70,8 @@ public class CrimePagerActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_item_delete:
-                CrimeLab.getCrimeLab(getApplicationContext()).getCrimeList().remove(mCrime);
+                String whereClause = CrimeDbSchema.CrimeTable.Cols.UUID + " = ?";
+                CrimeLab.getCrimeLab(getApplicationContext()).deleteCrime(whereClause, new String[] {crimeId.toString()});
                 finish();
                 return true;
         }

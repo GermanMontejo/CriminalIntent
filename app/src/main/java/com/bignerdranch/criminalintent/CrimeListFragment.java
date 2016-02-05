@@ -17,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.UUID;
 
 public class CrimeListFragment extends Fragment {
     public static final String LIST_POSITION = "LIST_POSITION";
@@ -56,6 +55,7 @@ public class CrimeListFragment extends Fragment {
             mRecyclerView.setAdapter(mCrimeAdapter);
         } else {
             mCrimeAdapter.notifyDataSetChanged();
+            mCrimeAdapter.setCrimes(crimeList);
         }
         updateSubtitle();
     }
@@ -141,6 +141,10 @@ public class CrimeListFragment extends Fragment {
         public int getItemCount() {
             return mCrimeList.size();
         }
+
+        public void setCrimes(List<Crime> crimes) {
+            mCrimeList = crimes;
+        }
     }
 
     @Override
@@ -159,7 +163,7 @@ public class CrimeListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_item_new_crime:
-                Crime crime = new Crime(UUID.randomUUID());
+                Crime crime = new Crime();
                 CrimeLab.getCrimeLab(getActivity()).addCrime(crime);
                 Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
                 startActivity(intent);

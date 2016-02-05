@@ -33,25 +33,24 @@ public class DatePickerFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_date_picker, null, false);
         mDatePicker = (DatePicker) view.findViewById(R.id.dialog_date_picker);
         mDatePicker.init(year, month, day, null);
-        mDatePicker.setCalendarViewShown(true);
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.date_picker_title)
+                .setView(R.layout.dialog_date_picker)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int dpYear = mDatePicker.getYear();
                         int dpMonth = mDatePicker.getMonth();
                         int dpDay = mDatePicker.getDayOfMonth();
-                        Toast.makeText(getActivity(), "Which" + which + "\nDay: " + dpDay + " Month: " + dpMonth + " Year: " + dpYear, Toast.LENGTH_LONG).show();
                         Date date = new GregorianCalendar(dpYear, dpMonth, dpDay).getTime();
                         sendResult(Activity.RESULT_OK, date);
                     }
                 })
-                .setView(R.layout.dialog_date_picker)
                 .create();
         return alertDialog;
     }
+
 
     public static DatePickerFragment newInstance(Date date) {
         DatePickerFragment datePickerFragment = new DatePickerFragment();
@@ -65,7 +64,6 @@ public class DatePickerFragment extends DialogFragment {
         if (getTargetFragment() == null) {
             return;
         }
-        Toast.makeText(getActivity(), "Date: " + date.toString(), Toast.LENGTH_LONG).show();
         Intent intent = new Intent();
         intent.putExtra(EXTRA_DATE, date);
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
